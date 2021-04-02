@@ -1,13 +1,4 @@
 #include "header.h"
-
-  
-typedef struct game_s
-{
-	int** vals;
-	int** cons;
-	int size;
-} game;
-
 game* newGame(char** av)
 {
 	game* G = loc(sizeof(game));
@@ -27,24 +18,6 @@ game* newGame(char** av)
 		}
 	}
 	return G;
-}
-void printGame(game G)
-{
-	printf("  ");
-	for(int i  = 0; i < G.size; i++)
-		printf("%d ", G.cons[0][i]);
-	printf("\n");;
-	for(int i  = 0; i < G.size; i++)
-	{
-		printf("%d ", G.cons[3][i]);
-		for(int j  = 0; j < G.size; j++)
-			printf("%d ", G.vals[i][j]);
-		printf("%d\n", G.cons[1][i]);
-	}
-	printf("  ");
-	for(int i  = 0; i < G.size; i++)
-		printf("%d ", G.cons[2][i]);
-	printf("\n");
 }
 
 int* rSeg(int y, int x, int sens, game G)//0 down 1 right
@@ -110,33 +83,6 @@ int solve(int y, int x, game* G)
 		}
 	}
 	return 0;
-}
-int error(int code)
-{
-	char* errors[] = {
-		"needs 4 arguments",
-		"not every constrain array has the same length",
-		"could  not be solved",
-		"put only numbers in the arguments"
-	};
-	printf("ERROR %d: %s\n", code, errors[code]);
-	return 1;
-}
-int checkArguments(char** av)
-{
-	int length = strl(av[1]);
-	for(int i = 1; i < 5; i++)
-	{
-		int j = 0;
-		while(av[i][j]){
-			if(!isNum(av[i][j]))
-				return 3;
-			j++;
-		}
-		if(j != length)
-			return 1;
-	}
-	return -1;//no error
 }
 int main(int ac, char** av)
 {
