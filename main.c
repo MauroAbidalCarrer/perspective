@@ -1,5 +1,6 @@
 #include "header.h"
 
+  
 typedef struct game_s
 {
 	int** vals;
