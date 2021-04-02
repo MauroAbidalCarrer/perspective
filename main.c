@@ -67,7 +67,7 @@ int count(int s/*sens*/, int* seg, int size)//0 right 1 left
 }
 int isLegal(int y, int x, int t, game G)
 {
-printf("isLegal(y=%d, x=%d, %d)\n", y, x, t);
+	printf("isLegal(y=%d, x=%d, %d)\n", y, x, t);
 	int isLeg = 1;
 	//horizontal checks
 	int* s = rSeg(y, x, 1, G);
@@ -116,22 +116,44 @@ int error(int code)
 	char* errors[] = {
 		"needs 4 arguments",
 		"not every cons has the same length",
-		"could  not be solved"
+		"could  not be solved",
+		"put only numbers in the arguments"
 	};
-	printf("%s\n", errors[code]);
+	printf("code=%d\n", code);
+	printf("ERROR: %s\n", errors[code]);
 	return 1;
 }
-
-int main(int ac, char** av)
+int checkArgeuments(int ac, char** av)
 {
 	if (ac != 5)
 		return error(1);
+	int length = strl(av[1]);
+	for(int i =2; i < 5; i++)
+	{
+		int j = 0;
+		while(av[i][j]){
+			if(j<48 || j>59)
+				return 4;
+		}
+		if(j != length)
+			return 1;
+	}
+	return -1;
+}
+int main(int ac, char** av)
+{
+//if ac == 5 then create game with av
+//if ac == 2 rhen read file 
+//else error 0
+	//int err = checkArgeuments(ac, av);
+//	if(err != -1)
+//		return error(err);
 	game* G = newGame(av);
 	printGame(*G);
 	int yes = solve(0, 0, G);
-printf("\n");
+	printf("\n");
 	printGame(*G);
 	if(!yes)
 		return error(2);
-printf("solved!\n");
+	printf("solved!\n");
 }
