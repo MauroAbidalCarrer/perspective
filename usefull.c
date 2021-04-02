@@ -13,3 +13,5 @@ void* loc(int size)
 	assert(pointer);
 	return pointer;
 }
+int isNum(char c)
+{return (c>=48&&c<=58);}

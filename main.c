@@ -23,7 +23,6 @@ game* newGame(char** av)
 			G->cons[i][j] = av[1+i][j] - 48;
 			G->vals[j] = loc(SI * size);
 			for(int k = 0; k < size; k++)
-				//G->vals[j][k] = j*size+k;
 				G->vals[j][k] = 0;
 		}
 	}
@@ -68,7 +67,7 @@ int count(int s/*sens*/, int* seg, int size)//0 right 1 left
 }
 int isLegal(int y, int x, int t, game G)
 {
-	printf("isLegal(y=%d, x=%d, %d)\n", y, x, t);
+	//printf("isLegal(y=%d, x=%d, %d)\n", y, x, t);
 	int isLeg = 1;
 	//horizontal checks
 	int* s = rSeg(y, x, 1, G);
@@ -103,7 +102,7 @@ int solve(int y, int x, game* G)
 		if(isLegal(y, x, t, *G))
 		{
 			G->vals[y][x] = t;
-			printGame(*G);
+			//printGame(*G);
 			if ((y == s-1 && x == s-1) 
 				|| solve(y + (x+1)/s, (x+1)%s, G))
 				return 1;
@@ -116,41 +115,41 @@ int error(int code)
 {
 	char* errors[] = {
 		"needs 4 arguments",
-		"not every cons has the same length",
+		"not every constrain array has the same length",
 		"could  not be solved",
 		"put only numbers in the arguments"
 	};
-	printf("code=%d\n", code);
-	printf("ERROR: %s\n", errors[code]);
+	printf("ERROR %d: %s\n", code, errors[code]);
 	return 1;
 }
-int checkArgeuments(int ac, char** av)
+int checkArguments(char** av)
 {
-	if (ac != 5)
-		return error(1);
 	int length = strl(av[1]);
-	for(int i =2; i < 5; i++)
+	for(int i = 1; i < 5; i++)
 	{
 		int j = 0;
 		while(av[i][j]){
-			if(j<48 || j>59)
-				return 4;
+			if(!isNum(av[i][j]))
+				return 3;
+			j++;
 		}
 		if(j != length)
 			return 1;
 	}
-	return -1;
+	return -1;//no error
 }
 int main(int ac, char** av)
 {
-//if ac == 5 then create game with av
-//if ac == 2 rhen read file 
-//else error 0
-	//int err = checkArgeuments(ac, av);
-//	if(err != -1)
-//		return error(err);
+	//if ac == 5 then create game with av
+	//if ac == 2 rhen read file 
+	//else error 0
+	if (ac != 5)
+		return error(1);
+	int err = checkArguments(av);
+	if(err != -1)
+		return error(err);
 	game* G = newGame(av);
-	printGame(*G);
+	//printGame(*G);
 	int yes = solve(0, 0, G);
 	printf("\n");
 	printGame(*G);
