@@ -1,22 +1,28 @@
 #include "header.h"
-game* newGame(char** av)
+int** newVals(int size)
+{
+	int** vals = loc(sizeof(int*) * size);
+	for(int i = 0; i < size; i++)
+	{
+		vals[i] = loc(SI * size);
+		for(int j = 0; j < size; j++)
+			vals[i][j] = 0;
+	}
+	return vals;
+}
+game* newGameFromAv(char** av)
 {
 	game* G = loc(sizeof(game));
 	int size = strl(av[1]);
 	G->size = size;
-	G->vals = loc(sizeof(int*) * size);
 	G->cons = loc(sizeof(int*) * 4);
 	for(int i = 0; i < 4; i++)
 	{
 		G->cons[i] = loc(SI * size); 
 		for(int j = 0; j < size; j++)
-		{
 			G->cons[i][j] = av[1+i][j] - 48;
-			G->vals[j] = loc(SI * size);
-			for(int k = 0; k < size; k++)
-				G->vals[j][k] = 0;
-		}
 	}
+	G->vals  = newVals(size);
 	return G;
 }
 //0 down 1 right
@@ -75,7 +81,6 @@ int solve(int y, int x, game* G)
 		if(isLegal(y, x, t, *G))
 		{
 			G->vals[y][x] = t;
-			//printGame(*G);
 			if ((y == s-1 && x == s-1) 
 					|| solve(y + (x+1)/s, (x+1)%s, G))
 				return 1;
@@ -86,14 +91,10 @@ int solve(int y, int x, game* G)
 }
 int* lineOfCons(char* con, int* s)
 {
-	//	printf("line called con =\n%s", con);
 	int j = 0;
 	int size = 0;
 	while(con[j] && con[j] != '\n')
-	{
-		size += isNum(con[j]);
-		j++;
-	}
+		size += isNum(con[j++]);
 	int* cons = loc(sizeof(int) * size);
 	j = 0;
 	int i = 0;
@@ -108,6 +109,7 @@ int* lineOfCons(char* con, int* s)
 }
 game* readGame(char* con/*fileContent*/)
 {
+//read constrains and get size
 	int size;
 	int** cons = loc(sizeof(int*) * 4);
 	cons[0] = lineOfCons(con, &size);
@@ -116,48 +118,40 @@ game* readGame(char* con/*fileContent*/)
 	int useless;
 	for(int i = 0; i < size; ++i)
 	{
-		con += nextC(con, '\n');
-		while(!isNum(*con))
-			con++;
-		int* yes = lineOfCons(con, &useless);
-		cons[3][i] = *yes;
-		cons[1][i] = yes[1];
+		con = nextN(con);
+		int* line = lineOfCons(con, &useless);
+		cons[3][i] = *line;
+		cons[1][i] = line[1];
 	}
-	con += nextC(con, '\n');
-	while(!isNum(*con))
-		con++;
+	con = nextN(con);
 	cons[2] = lineOfCons(con, &useless);
-	for(int j = 0; j < 4; j++)
-	{
-		for(int k =0; k < size; k++)
-			printf("cons[%d][%d]=%d\n", j, k, cons[j][k]);
-		printf("\n");
-	}
-
-	return NULL;
+	//create game
+	game* G = loc(sizeof(game));
+	G->cons = cons;
+	G->vals = newVals(size);
+	G->size = size;
+	return G;
 }
 int main(int ac, char** av)
 {
+	game* G;
 	if (ac == 5)//then create game with av
 	{
-		printf("ac = 5\n");
 		int err = checkArguments(av);
 		if(err != -1)
 			return error(err);
-		game* G = newGame(av);
-		//printGame(*G);
-		int yes = solve(0, 0, G);
-		printGame(*G);
-		if(!yes)
-			return error(2);
-		printf("solved!\n");
+		game* G = newGameFromAv(av);
 		return 0;
 	}
 	if(ac == 2)//then read file
 	{
 		char* con/*content*/ = getFileContent(av[1]);
-		game* G;
-		void* azbeyazE = readGame(con);
+	G = readGame(con);
 	}
+	int solved = solve(0, 0, G);
+	printGame(*G);
+	if(!solved)
+		return error(2);
+	printf("solved!\n");
 	return 1;
 }

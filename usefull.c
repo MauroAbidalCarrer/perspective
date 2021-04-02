@@ -38,13 +38,10 @@ int nextCs(char* str, char* Cs)
 	}
 	return -1;
 }
-int nextN(char* str)
+char* nextN(char* con)
 {
-	int i = -1;
-	while(str[++i])
-	{
-		if(isNum(str[i]))
-			return i;
-	}
-	return -1;
+	con += nextC(con, '\n');
+	while(!isNum(*con))
+		con++;
+	return con;
 }

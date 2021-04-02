@@ -16,7 +16,7 @@ void* loc(int size);
 int isNum(char c);
 int nextC(char* str, char c);
 int nextCs(char* str, char* Cs);
-int nextN(char* str);
+char* nextN(char* con);
 //IO
 void printGame(game G);
 int checkArguments(char** av);
