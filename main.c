@@ -19,15 +19,15 @@ game* newGame(char** av)
 	}
 	return G;
 }
-
-int* rSeg(int y, int x, int sens, game G)//0 down 1 right
-{
+//0 down 1 right
+int* rSeg(int y, int x, int sens, game G){
 	int* seg = loc(sizeof(int) * G.size);
 	for(int i = 0; i < G.size; i++)
 		seg[i]  = G.vals[sens ? y : i][sens ? i : x];
 	return seg;
 }
-int count(int s/*sens*/, int* seg, int size)//0 right 1 left
+//0 right 1 left
+int count(int s/*sens*/, int* seg, int size)
 {
 	int nb = 1;
 	int H = s?seg[size-1]:*seg;
@@ -77,29 +77,87 @@ int solve(int y, int x, game* G)
 			G->vals[y][x] = t;
 			//printGame(*G);
 			if ((y == s-1 && x == s-1) 
-				|| solve(y + (x+1)/s, (x+1)%s, G))
+					|| solve(y + (x+1)/s, (x+1)%s, G))
 				return 1;
 			G->vals[y][x] = 0;
 		}
 	}
 	return 0;
 }
+int* lineOfCons(char* con, int* s)
+{
+	//	printf("line called con =\n%s", con);
+	int j = 0;
+	int size = 0;
+	while(con[j] && con[j] != '\n')
+	{
+		size += isNum(con[j]);
+		j++;
+	}
+	int* cons = loc(sizeof(int) * size);
+	j = 0;
+	int i = 0;
+	while(con[j] != '\n')
+	{
+		if(isNum(con[j]))
+			cons[i++] = con[j] - 48;
+		j++;
+	}
+	*s = size;
+	return cons;
+}
+game* readGame(char* con/*fileContent*/)
+{
+	int size;
+	int** cons = loc(sizeof(int*) * 4);
+	cons[0] = lineOfCons(con, &size);
+	cons[1] = loc(sizeof(int) * size);
+	cons[3] = loc(sizeof(int) * size);
+	int useless;
+	for(int i = 0; i < size; ++i)
+	{
+		con += nextC(con, '\n');
+		while(!isNum(*con))
+			con++;
+		int* yes = lineOfCons(con, &useless);
+		cons[3][i] = *yes;
+		cons[1][i] = yes[1];
+	}
+	con += nextC(con, '\n');
+	while(!isNum(*con))
+		con++;
+	cons[2] = lineOfCons(con, &useless);
+	for(int j = 0; j < 4; j++)
+	{
+		for(int k =0; k < size; k++)
+			printf("cons[%d][%d]=%d\n", j, k, cons[j][k]);
+		printf("\n");
+	}
+
+	return NULL;
+}
 int main(int ac, char** av)
 {
-	//if ac == 5 then create game with av
-	//if ac == 2 rhen read file 
-	//else error 0
-	if (ac != 5)
-		return error(1);
-	int err = checkArguments(av);
-	if(err != -1)
-		return error(err);
-	game* G = newGame(av);
-	//printGame(*G);
-	int yes = solve(0, 0, G);
-	printf("\n");
-	printGame(*G);
-	if(!yes)
-		return error(2);
-	printf("solved!\n");
+	if (ac == 5)//then create game with av
+	{
+		printf("ac = 5\n");
+		int err = checkArguments(av);
+		if(err != -1)
+			return error(err);
+		game* G = newGame(av);
+		//printGame(*G);
+		int yes = solve(0, 0, G);
+		printGame(*G);
+		if(!yes)
+			return error(2);
+		printf("solved!\n");
+		return 0;
+	}
+	if(ac == 2)//then read file
+	{
+		char* con/*content*/ = getFileContent(av[1]);
+		game* G;
+		void* azbeyazE = readGame(con);
+	}
+	return 1;
 }

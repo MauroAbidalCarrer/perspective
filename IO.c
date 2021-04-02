@@ -1,4 +1,5 @@
 #include "header.h"
+//OUTPUT
 void printGame(game G)
 {
 	printf("  ");
@@ -17,6 +18,9 @@ void printGame(game G)
 		printf("%d ", G.cons[2][i]);
 	printf("\n");
 }
+
+//INPUT
+//checks
 int error(int code)
 {
 	char* errors[] = {
@@ -43,4 +47,25 @@ int checkArguments(char** av)
 			return 1;
 	}
 	return -1;//no error
+}
+//read files
+char* getFileContent(char* path)
+{
+	FILE *fd = fopen(path, "r"); // read mode
+	if (fd == NULL)
+	{
+		printf("can't open the file.\n");
+		return NULL;
+	}
+	int length = 0;
+	while(fgetc(fd) != EOF)
+		length++;
+	rewind(fd);
+	char* content = loc(sizeof(char) * (length + 1));
+	int i = -1;
+	while(++i < length)
+		content[i] = fgetc(fd);
+	content[i] = 0;
+	fclose(fd);
+	return content;
 }
