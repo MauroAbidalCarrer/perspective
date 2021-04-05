@@ -124,19 +124,24 @@ int isLegalG(int t, int y, int x, game G)
 int setVal(int y, int x, game* G)
 {
 	int s = G->size;
-	int trial = rand() % (s+1);
+	int trial = rand();
 	for(int i = 0; i < s; i++)
 	{
+		trial = (trial + 1 ) % (s+1);
+		trial = trial == 0 ? 1 : trial;
+		printf("(%d, %d) trying %d\n", x, y, trial);
 		if(isLegalG(trial, y, x, *G))
 		{
 			G->vals[y][x] = trial;
-			//printGame(*G);
+			printf("(%d, %d) putting %d\n", x, y, trial);
+			printGame(*G);
 			if ((y == s-1 && x == s-1) 
 					|| setVal(y + (x+1)/s, (x+1)%s, G))
 				return 1;
 			G->vals[y][x] = 0;
 		}
-		trial = (trial + 1 ) % (s+1);
+		else
+			printf("(%d, %d) could not put %d\n", x, y, trial);
 	}
 	return 0;
 }
@@ -149,7 +154,8 @@ game createGame(int s/*size*/)
 	G.cons = array2D(4, s);
 	G.next = NULL;
 	//set vals
-	setVal(0, 0, &G);
+if(!setVal(0, 0, &G))
+	printf("could not gen\n");
 	//set constrains
 	for(int i = 0; i < s; i++)
 	{
