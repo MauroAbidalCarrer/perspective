@@ -24,10 +24,12 @@ void printGame(game G)
 int error(int code)
 {
 	char* errors[] = {
-		"needs 4 arguments",
+		"can only enter one or four arguments",
 		"not every constrain array has the same length",
-		"could  not be solved",
-		"put only numbers in the arguments"
+		"could not be solved",
+		"put only numbers in the arguments",
+		"can't open the file",
+		"constrains must be in the range 1-9 included"
 	};
 	printf("ERROR %d: %s\n", code, errors[code]);
 	return 1;
@@ -41,6 +43,8 @@ int checkArguments(char** av)
 		while(av[i][j]){
 			if(!isNum(av[i][j]))
 				return 3;
+			if(av[i][j] == 48)
+				return 5;
 			j++;
 		}
 		if(j != length)
@@ -53,10 +57,7 @@ char* getFileContent(char* path)
 {
 	FILE *fd = fopen(path, "r"); // read mode
 	if (fd == NULL)
-	{
-		printf("can't open the file.\n");
 		return NULL;
-	}
 	int length = 0;
 	while(fgetc(fd) != EOF)
 		length++;

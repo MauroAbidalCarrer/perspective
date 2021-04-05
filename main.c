@@ -214,14 +214,15 @@ game* readGames(char** con/*fileContent*/)
 }
 int main(int ac, char** av)
 {
+	if(ac != 5 && ac != 2)
+		return error(0);
 	game* G;
 	if (ac == 5)//then create game with av
 	{
 		int err = checkArguments(av);
 		if(err != -1)
 			return error(err);
-		game* G = newGameFromAv(av);
-		return 0;
+		G = newGameFromAv(av);
 	}
 	if(ac == 2)//then read file
 	{
@@ -232,6 +233,8 @@ int main(int ac, char** av)
 			return 0;
 		}
 		char* con/*content*/ = getFileContent(av[1]);
+		if(con == NULL)
+			return error(4);
 		G = readGames(&con);
 	}
 	while(G != NULL)
@@ -243,5 +246,5 @@ int main(int ac, char** av)
 		printf("solved!\n");
 		G = G->next;
 	}
-	return 1;
+	return 0;
 }
