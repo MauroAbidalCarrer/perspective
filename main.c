@@ -1,14 +1,14 @@
 #include "header.h"
-int** newVals(int size)
+int** array2D(int a, int b)
 {
-	int** vals = loc(sizeof(int*) * size);
-	for(int i = 0; i < size; i++)
+	int** array = loc(sizeof(int*)*a);
+	for(int i = 0; i < a; i++)
 	{
-		vals[i] = loc(SI * size);
-		for(int j = 0; j < size; j++)
-			vals[i][j] = 0;
+		array[i] = loc(sizeof(int)*b);
+		for(int j = 0; j < b; j++)
+			array[i][j] = 0;
 	}
-	return vals;
+	return array;
 }
 game* newGameFromAv(char** av)
 {
@@ -22,7 +22,8 @@ game* newGameFromAv(char** av)
 		for(int j = 0; j < size; j++)
 			G->cons[i][j] = av[1+i][j] - 48;
 	}
-	G->vals  = newVals(size);
+	G->vals  = array2D(size, size);
+	G->next = NULL;
 	return G;
 }
 //0 down 1 right
@@ -93,8 +94,12 @@ int* lineOfCons(char* con, int* s)
 {
 	int j = 0;
 	int size = 0;
-	while(con[j] && con[j] != '\n')
+	while(con[j] != '\n')
+	{
+		if(con[j] == 0)
+			return NULL;
 		size += isNum(con[j++]);
+	}
 	int* cons = loc(sizeof(int) * size);
 	j = 0;
 	int i = 0;
@@ -107,29 +112,98 @@ int* lineOfCons(char* con, int* s)
 	*s = size;
 	return cons;
 }
-game* readGame(char* con/*fileContent*/)
+int isLegalG(int t, int y, int x, game G)
 {
-//read constrains and get size
+	int* segV = rSeg(y, x, 0, G);
+	int* segH = rSeg(y, x, 1, G);
+	int isLeg = 1;
+	for(int i = 0; i < G.size; i++)
+		isLeg *= (segV[i] != t) * (segH[i] != t);
+	return isLeg;
+}
+int setVal(int y, int x, game* G)
+{
+	int s = G->size;
+	int trial = rand() % (s+1);
+	for(int i = 0; i < s; i++)
+	{
+		if(isLegalG(trial, y, x, *G))
+		{
+			G->vals[y][x] = trial;
+			//printGame(*G);
+			if ((y == s-1 && x == s-1) 
+					|| setVal(y + (x+1)/s, (x+1)%s, G))
+				return 1;
+			G->vals[y][x] = 0;
+		}
+		trial = (trial + 1 ) % (s+1);
+	}
+	return 0;
+}
+game createGame(int s/*size*/)
+{
+	//alloc mem
+	game G;
+	G.size = s;
+	G.vals = array2D(s, s);
+	G.cons = array2D(4, s);
+	G.next = NULL;
+	//set vals
+	setVal(0, 0, &G);
+	//set constrains
+	for(int i = 0; i < s; i++)
+	{
+		int* H = rSeg(i, 0, 1, G);
+		int* V = rSeg(0, i, 0, G);
+		G.cons[0][i] = count(0, V, s);
+		G.cons[1][i] = count(1, H, s);
+		G.cons[2][i] = count(1, V, s);
+		G.cons[3][i] = count(0, H, s);
+	}
+	return G;
+}
+game* readGames(char** con/*fileContent*/)
+{
+	//read constrains and get size
+	while(!isNum(**con))
+	{
+		if(**con==0)
+			return NULL;
+		*con +=1;
+	}
 	int size;
 	int** cons = loc(sizeof(int*) * 4);
-	cons[0] = lineOfCons(con, &size);
+	if((cons[0] = lineOfCons(*con, &size))==NULL)
+		return NULL;
 	cons[1] = loc(sizeof(int) * size);
 	cons[3] = loc(sizeof(int) * size);
-	int useless;
+	int s;
 	for(int i = 0; i < size; ++i)
 	{
-		con = nextN(con);
-		int* line = lineOfCons(con, &useless);
+		*con = nextN(*con);
+		int* line;
+		if((line= lineOfCons(*con, &s)) == NULL)
+			return NULL;
+		if(s != 2)
+		{printf("i=%d, s=%d\n con=\n%s", i,  s, *con);
+			return NULL;}
 		cons[3][i] = *line;
 		cons[1][i] = line[1];
 	}
-	con = nextN(con);
-	cons[2] = lineOfCons(con, &useless);
+	*con = nextN(*con);
+	if((cons[2] = lineOfCons(*con, &s))==NULL)
+	{printf("second line went wrong\n");
+		return NULL;}
+	if(s != size){
+		printf("size=%d not equal to %d\n", s, size);
+		return NULL;}
+	*con += nextC(*con,'\n');
 	//create game
 	game* G = loc(sizeof(game));
 	G->cons = cons;
-	G->vals = newVals(size);
+	G->vals = array2D(size, size);
 	G->size = size;
+	G->next = readGames(con);
 	return G;
 }
 int main(int ac, char** av)
@@ -145,13 +219,23 @@ int main(int ac, char** av)
 	}
 	if(ac == 2)//then read file
 	{
+		if(isNum(*av[1]))
+		{
+			srand((unsigned int) time(NULL));
+			printGame(createGame(*av[1] - 48));
+			return 0;
+		}
 		char* con/*content*/ = getFileContent(av[1]);
-	G = readGame(con);
+		G = readGames(&con);
 	}
-	int solved = solve(0, 0, G);
-	printGame(*G);
-	if(!solved)
-		return error(2);
-	printf("solved!\n");
+	while(G != NULL)
+	{
+		int solved = solve(0, 0, G);
+		printGame(*G);
+		if(!solved)
+			return error(2);
+		printf("solved!\n");
+		G = G->next;
+	}
 	return 1;
 }

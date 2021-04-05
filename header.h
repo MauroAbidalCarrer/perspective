@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<time.h>
 #include<assert.h>
 #include<stdlib.h>
 #define SI sizeof(int)
@@ -8,6 +9,7 @@ typedef struct game_s
 	int** vals;
 	int** cons;
 	int size;
+	struct game_s* next;
 } game;
 
 //usefull

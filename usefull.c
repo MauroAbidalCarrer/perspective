@@ -41,7 +41,7 @@ int nextCs(char* str, char* Cs)
 char* nextN(char* con)
 {
 	con += nextC(con, '\n');
-	while(!isNum(*con))
+	while(!isNum(*con) && *con)
 		con++;
 	return con;
 }
