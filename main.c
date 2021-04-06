@@ -129,23 +129,18 @@ int setVal(int y, int x, game* G)
 	{
 		trial = (trial + 1 ) % (s+1);
 		trial = trial == 0 ? 1 : trial;
-		printf("(%d, %d) trying %d\n", x, y, trial);
 		if(isLegalG(trial, y, x, *G))
 		{
 			G->vals[y][x] = trial;
-			printf("(%d, %d) putting %d\n", x, y, trial);
-			printGame(*G);
 			if ((y == s-1 && x == s-1) 
 					|| setVal(y + (x+1)/s, (x+1)%s, G))
 				return 1;
 			G->vals[y][x] = 0;
 		}
-		else
-			printf("(%d, %d) could not put %d\n", x, y, trial);
 	}
 	return 0;
 }
-game createGame(int s/*size*/)
+game createGame(int s/*size*/, int showAnswer)
 {
 	//alloc mem
 	game G;
@@ -166,6 +161,8 @@ if(!setVal(0, 0, &G))
 		G.cons[2][i] = count(1, V, s);
 		G.cons[3][i] = count(0, H, s);
 	}
+	if(!showAnswer)
+		G.vals = array2D(s, s);
 	return G;
 }
 game* readGames(char** con/*fileContent*/)
@@ -213,7 +210,7 @@ game* readGames(char** con/*fileContent*/)
 }
 int main(int ac, char** av)
 {
-	if(ac != 5 && ac != 2)
+	if(ac != 5 && ac != 2 && ac != 3)
 		return error(0);
 	game* G;
 	if (ac == 5)//then create game with av
@@ -223,14 +220,29 @@ int main(int ac, char** av)
 			return error(err);
 		G = newGameFromAv(av);
 	}
-	if(ac == 2)//then read file
+	if(ac == 2 || ac == 3)
 	{
-		if(isNum(*av[1]))
-		{
+//generate game
+		if(isNum(*av[1]) && strl(av[1]) == 1)
+		{	
+			if(*av[1] == 48)
+				return error(7);
+			//taken from the internet
 			srand((unsigned int) time(NULL));
-			printGame(createGame(*av[1] - 48));
+			game G;
+			if(ac == 3)
+			{
+				if(myStrstr(av[2], "+a"))
+					G = createGame(*av[1] - 48, 1);
+				else
+					return error(6);
+			}
+			else
+				G = createGame(*av[1] - 48, 0);
+			printGame(G);
 			return 0;
 		}
+//read game
 		char* con/*content*/ = getFileContent(av[1]);
 		if(con == NULL)
 			return error(4);

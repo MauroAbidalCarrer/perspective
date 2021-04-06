@@ -8,6 +8,13 @@ void* loc(int size)
 }
 
 //strings and chars
+int myStrstr(char* a, char* b)
+{
+	int i = 0;
+	while(a[i] && b[i] && a[i] == b[i])
+		i++;
+	return a[i] == b[i];
+}
 int strl(char* str)
 {
 	int i = 0;

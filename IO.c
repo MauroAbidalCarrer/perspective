@@ -24,15 +24,17 @@ void printGame(game G)
 int error(int code)
 {
 	char* errors[] = {
-		"can only enter one or four arguments",
+		"can only enter one, two or four arguments",
 		"not every constrain array has the same length",
 		"could not be solved",
 		"put only numbers in the arguments",
 		"can't open the file",
-		"constrains must be in the range 1-9 included"
+		"constrains must be in the range 1-9 included",
+"Second argument could not be read.\nWrite \"+a\" after the desired size if you want to show the answer of the genrated puzzle",
+"cannot generate a puzzle of size 0"
 	};
 	printf("ERROR %d: %s\n", code, errors[code]);
-	return 1;
+	return code;
 }
 int checkArguments(char** av)
 {

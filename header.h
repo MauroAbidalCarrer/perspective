@@ -13,6 +13,7 @@ typedef struct game_s
 } game;
 
 //usefull
+int myStrstr(char* a, char* b);
 int strl(char* str);
 void* loc(int size);
 int isNum(char c);

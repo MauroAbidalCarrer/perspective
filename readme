@@ -45,6 +45,7 @@ Pour tester la capacité du programme a lire dans un fichiervous pouvez donc ent
 Il resoudra donc deux fois le (même) puzzle.
 
 Pour générer un puzzle, il faut entrer un chiffre entre 1-9 inclus.
-Le programme écrira sur la sortie standard le puzzle résolu.
+Le programme écrira sur la sortie standard le puzzle.
+Pour lui faire afficher les réponses, ajoutez l'option +a.
 
 Mauro Abidal Carrer 2nd semstre L1-X
