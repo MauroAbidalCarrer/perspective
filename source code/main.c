@@ -39,7 +39,7 @@ int isLegal(int y, int x, int t, game G)
 	//horizontal checks
 	int* s = rSeg(y, x, 1, G);
 	for(int i = 0; i < G.size; i++)
-		isLeg *= (s[i] != t);
+		isLeg *= s[i] != t;
 	s[x] = t;
 	if(x == G.size - 1){
 		isLeg *= (count(0, s, G.size)==G.cons[3][y]);
@@ -66,8 +66,6 @@ int isLegal(int y, int x, int t, game G)
 int solve(int y, int x, game* G)
 {
 	int s = G->size;
-	if(G->vals[y][x])
-		return (y == s-1 && x == s-1) || solve(y + (x+1)/s, (x+1)%s, G);
 	for(int t/*trial*/ = 1; t <= s; t++)
 	{
 		if(isLegal(y, x, t, *G))
@@ -80,22 +78,6 @@ int solve(int y, int x, game* G)
 		}
 	}
 	return 0;
-}
-int solveGame(game* G)
-{
-	//add  1 and line that are obvoius to speed the process
-	int s = G->size;
-	for(int a = 0; a < 4; a++)
-	{
-		for(int b = 0; b < s; b++)
-		{
-			int y [] = {0, b, s - 1, b};
-			int x [] = {b, s - 1, b, 0};
-			if(G->cons[a][b] == 1)
-				G->vals[y[a]][x[a]] = s;
-		}
-	}
-	return solve(0, 0, G);
 }
 int* lineOfCons(char* con, int* s)
 {
@@ -266,7 +248,7 @@ int main(int ac, char** av)
 	game* firstG = G;
 	while(G != NULL)
 	{
-		int solved = solveGame(G);
+		int solved = solve(0, 0, G);
 		printGame(*G);
 		if(!solved)
 			return error(2);
