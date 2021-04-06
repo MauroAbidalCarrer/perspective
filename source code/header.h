@@ -24,6 +24,7 @@ void* loc(int size);
 int** array2D(int a, int b);
 void freeGame(game* G);
 void freeArray(int** array, int a);
+void clearIntArray(int** array, int a, int b);
 //IO
 void printGame(game G);
 int checkArguments(char** av);

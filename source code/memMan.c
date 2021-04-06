@@ -32,3 +32,12 @@ void freeGame(game* G)
 	freeArray(G->vals, G->size);
 	free(G);
 }
+//clear mem
+void clearIntArray(int** array, int a, int b)
+{
+	for(int i = 0; i < a; i++)
+	{
+		for(int j = 0; j < b; j++)
+			array[i][j] = 0;
+	}
+}
