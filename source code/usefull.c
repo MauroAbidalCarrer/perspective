@@ -52,8 +52,3 @@ char* nextN(char* con)
 		con++;
 	return con;
 }
-//mem gestion
-void freeGame(game* G)
-{
-
-}
