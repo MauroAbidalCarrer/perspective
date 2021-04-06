@@ -5,11 +5,11 @@ Pour entrer un puzzle à résoudre à travers la ligne de commande, il faut
 insérer les arguments de la facon suivantes:
 ./perspective abc def ghi jkl
 ou chaque argument correspond à un array d'argument:
- abc
-jxxxd
-kxxxe
-lxxxf
- ghi
+  a b c
+j x x x d
+k x x x e
+l x x x f
+  g h i
 j'ai appellé abcdefghijkl, des contraintes et les croix, des valeurs.
 
 
