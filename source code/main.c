@@ -1,15 +1,4 @@
 #include "header.h"
-int** array2D(int a, int b)
-{
-	int** array = loc(sizeof(int*)*a);
-	for(int i = 0; i < a; i++)
-	{
-		array[i] = loc(sizeof(int)*b);
-		for(int j = 0; j < b; j++)
-			array[i][j] = 0;
-	}
-	return array;
-}
 game* newGameFromAv(char** av)
 {
 	game* G = loc(sizeof(game));
@@ -76,13 +65,14 @@ int isLegal(int y, int x, int t, game G)
 	}
 	else
 		isLeg *= count(0, s, G.size) <= G.cons[0][x];
+free(s);
 	return isLeg;
 }
 int solve(int y, int x, game* G)
 {
 	int s = G->size;
-if(G->vals[y][x])
-	return (y == s-1 && x == s-1) || solve(y + (x+1)/s, (x+1)%s, G);
+	if(G->vals[y][x])
+		return (y == s-1 && x == s-1) || solve(y + (x+1)/s, (x+1)%s, G);
 	for(int t/*trial*/ = 1; t <= s; t++)
 	{
 		if(isLegal(y, x, t, *G))
@@ -142,6 +132,8 @@ int isLegalG(int t, int y, int x, game G)
 	int isLeg = 1;
 	for(int i = 0; i < G.size; i++)
 		isLeg *= (segV[i] != t) * (segH[i] != t);
+	free(segV);
+	free(segH);
 	return isLeg;
 }
 int setVal(int y, int x, game* G)
@@ -172,8 +164,7 @@ game createGame(int s/*size*/, int showAnswer)
 	G.cons = array2D(4, s);
 	G.next = NULL;
 	//set vals
-if(!setVal(0, 0, &G))
-	printf("could not gen\n");
+	setVal(0, 0, &G);
 	//set constrains
 	for(int i = 0; i < s; i++)
 	{
@@ -183,12 +174,17 @@ if(!setVal(0, 0, &G))
 		G.cons[1][i] = count(1, H, s);
 		G.cons[2][i] = count(1, V, s);
 		G.cons[3][i] = count(0, H, s);
+		free(H);
+		free(V);
 	}
 	if(!showAnswer)
+	{
+		free(G.vals);
 		G.vals = array2D(s, s);
+	}
 	return G;
 }
-game* readGames(char** con/*fileContent*/)
+game* readGames(char** con/*fileContent adress*/)
 {
 	//read constrains and get size
 	while(!isNum(**con))
@@ -214,6 +210,7 @@ game* readGames(char** con/*fileContent*/)
 			return NULL;
 		cons[3][i] = *line;
 		cons[1][i] = line[1];
+free(line);
 	}
 	*con = nextN(*con);
 	if((cons[2] = lineOfCons(*con, &s))==NULL)
@@ -269,8 +266,11 @@ int main(int ac, char** av)
 		char* con/*content*/ = getFileContent(av[1]);
 		if(con == NULL)
 			return error(4);
+char* keepTrack = con;
 		G = readGames(&con);
+free(keepTrack);
 	}
+game* firstG = G;
 	while(G != NULL)
 	{
 		int solved = solveGame(G);
@@ -280,5 +280,6 @@ int main(int ac, char** av)
 		printf("solved!\n");
 		G = G->next;
 	}
+freeGame(firstG);
 	return 0;
 }

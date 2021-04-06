@@ -1,13 +1,4 @@
 #include"header.h"
-
-void* loc(int size)
-{
-	void* pointer = malloc(size);
-	assert(pointer);
-	return pointer;
-}
-
-//strings and chars
 int myStrstr(char* a, char* b)
 {
 	int i = 0;
