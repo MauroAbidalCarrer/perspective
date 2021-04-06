@@ -175,11 +175,11 @@ game* readGames(char** con/*fileContent*/)
 	{
 		if(**con==0)
 			return NULL;
-		*con +=1;
+		*con += 1;
 	}
 	int size;
 	int** cons = loc(sizeof(int*) * 4);
-	if((cons[0] = lineOfCons(*con, &size))==NULL)
+	if((cons[0] = lineOfCons(*con, &size)) == NULL)
 		return NULL;
 	cons[1] = loc(sizeof(int) * size);
 	cons[3] = loc(sizeof(int) * size);
@@ -188,11 +188,10 @@ game* readGames(char** con/*fileContent*/)
 	{
 		*con = nextN(*con);
 		int* line;
-		if((line= lineOfCons(*con, &s)) == NULL)
+		if((line = lineOfCons(*con, &s)) == NULL)
 			return NULL;
 		if(s != 2)
-		{printf("i=%d, s=%d\n con=\n%s", i,  s, *con);
-			return NULL;}
+			return NULL;
 		cons[3][i] = *line;
 		cons[1][i] = line[1];
 	}

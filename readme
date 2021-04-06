@@ -1,0 +1,50 @@
+	Projet perspective
+
+
+Pour entrer un puzzle à résoudre à travers la ligne de commande, il faut
+insérer les arguments de la facon suivantes:
+./perspective abc def ghi jkl
+ou chaque argument correspond à un array d'argument:
+ abc
+jxxxd
+kxxxe
+lxxxf
+ ghi
+j'ai appellé abcdefghijkl, des contraintes et les croix, des valeurs.
+
+
+Pour résoudre un problème écrit dans un fichier,
+il faut insérer le chemin vers le fichier.
+Les puzzles doivent être écrits de la façon suivante:
+  3 2 1 4
+3 x x x x 2
+2 x x x x 2
+1 x x x x 2
+4 x x x x 1
+  2 2 2 1
+Il peut y avoir autant de charactères entre deux contraintes de même cote.
+On peut donc réecrire le puzzle précédent sous la forme:
+ 3214
+3bonjour 2
+2ca2
+1va2
+4?1
+2 2 2 1
+Néanmoins, il ne doit pas y avoir de chiffre qui n'est pas utilié comme contrainte.
+Si on essaie de réecrire le problème avec une valeur déjà définit par exemple,
+le programme s'arretera de lire le fichier.
+  3 2 1 4
+3 x x x x 2
+2 x 1 x x 2
+1 x x x x 2
+4 x x x x 1
+  2 2 2 1
+Il est aussi interdi de donné des contraintes superieurs à 9 ou inferieurs à 1.
+Pour tester la capacité du programme a lire dans un fichiervous pouvez donc entrer la commande suivante:
+./perspective readme
+Il resoudra donc deux fois le (même) puzzle.
+
+Pour générer un puzzle, il faut entrer un chiffre entre 1-9 inclus.
+Le programme écrira sur la sortie standard le puzzle résolu.
+
+Mauro Abidal Carrer 2nd semstre L1-X

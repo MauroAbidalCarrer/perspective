@@ -16,7 +16,7 @@ int strl(char* str)
 	return i;
 }
 int isNum(char c)
-{return (c>=48&&c<=58);}
+{return c >= '0' && c <= '9' && c <= 127;}
 int nextC(char* str, char c)
 {
 	int i = -1;
