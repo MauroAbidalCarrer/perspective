@@ -1,5 +1,5 @@
 #include"header.h"
-
+//alloc
 void* loc(int size)
 {
 	void* pointer = malloc(size);
@@ -16,6 +16,21 @@ int** array2D(int a, int b)
 			array[i][j] = 0;
 	}
 	return array;
+}
+game* newGameFromAv(char** av)
+{
+	game* G = loc(sizeof(game));
+	int size = strl(av[1]);
+	G->size = size;
+	G->cons = array2D(4, size);
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < size; j++)
+			G->cons[i][j] = av[1+i][j] - 48;
+	}
+	G->vals  = array2D(size, size);
+	G->next = NULL;
+	return G;
 }
 //free
 void freeArray(int** array, int a)
